@@ -1,0 +1,10 @@
+[package]
+name = "tcp"
+version = { workspace = true }
+edition = { workspace = true }
+
+[dependencies]
+
+[features]
+single-thread = []
+default = ["single-thread"]
