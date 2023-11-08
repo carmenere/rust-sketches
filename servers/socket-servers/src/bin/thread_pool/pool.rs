@@ -9,29 +9,53 @@ use std::sync::Arc;
 
 pub struct ThreadPool {
     threads: Vec<JoinHandle<()>>,
-    sender: Sender<Job>
+    sender: Sender<Task>
+}
+
+enum Task {
+    Job(Job),
+    Terminate
 }
 
 type Job = Box<dyn FnOnce() -> Result<(), Box<dyn Error>> + Send + 'static>;
 
 impl ThreadPool {
+    pub fn drop(self) {
+        self.threads.iter().for_each(|_| self.sender.send(Task::Terminate).unwrap());
+
+        for t in self.threads {
+            t.join().unwrap()
+        }
+    }
+
     pub fn new(theads: u8) -> Result<Self, MyError> {
         if theads == 0 {
             MyError::new("Number of threads must be greter then 0.");
         }
 
         // let t: (Sender<Job>, Receiver<Job>) = mpsc::channel();
-        let (tx, rx) = mpsc::channel();
-        let rx: Arc<Mutex<mpsc::Receiver<Job>>> = Arc::new(Mutex::new(rx));
+        let (tx, rx) = mpsc::channel::<Task>();
+        let rx = Arc::new(Mutex::new(rx));
 
         Ok(Self {
-            threads: (1..=theads).map(|_| {let rx = rx.clone(); thread::spawn(move || loop {
+            threads: (1..=theads).map(|i| {let rx = rx.clone(); thread::spawn(move || {
+            println!("Create thread number {i}.");
+            loop {
                 let job = rx
                     .lock()
                     .unwrap()
                     .recv()
                     .unwrap();
-                let r  = job();
+                match job {
+                    Task::Job(job) => {
+                        job();
+                    },
+                    Task::Terminate => {
+                        break;
+                    },
+                }
+            };
+            println!("Terminating...");
             })}).collect(),
             sender: tx
         })
@@ -43,9 +67,19 @@ impl thread_pool::ThreadPool for ThreadPool {
     where 
         F: FnOnce() -> Result<(), Box<dyn Error>> + Send + 'static
     {
-        match self.sender.send(Box::new(f)) {
+        match self.sender.send(Task::Job(Box::new(f))) {
             Ok(r) => Ok(r),
             Err(e) => Err(Box::new(MyError::new(&e.to_string()))),
         }
     }
 }
+
+// impl Drop for ThreadPool {
+//     fn drop(&mut self) {
+//         self.threads.iter().for_each(|_| self.sender.send(Task::Terminate).unwrap());
+
+//         for t in &self.threads {
+//             t.join().unwrap()
+//         }
+//     }
+// }

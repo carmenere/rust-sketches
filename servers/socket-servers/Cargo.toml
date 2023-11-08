@@ -9,4 +9,3 @@ default-run = "socket-api"
 [features]
 single-thread = []
 thread-pool = []
-default = ["single-thread"]
