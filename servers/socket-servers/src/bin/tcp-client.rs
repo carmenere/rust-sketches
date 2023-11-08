@@ -1,6 +1,10 @@
-#[cfg(feature = "single-thread")]
-use tcp::single_thread::client;
+use std::error::Error;
 
-fn main() -> Result<(), std::io::Error> {
-    client::run()
+#[cfg(feature = "single-thread")]
+mod single_thread;
+
+fn main() -> Result<(), Box<dyn Error>> {
+    println!("tcp-client.rs");
+    let r = single_thread::client::run()?;
+    Ok(())
 }

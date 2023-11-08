@@ -1,9 +1,19 @@
+use std::error::Error;
+
 #[cfg(feature = "single-thread")]
-use tcp::single_thread::server;
+mod single_thread;
 
 #[cfg(feature = "thread-pool")]
-use tcp::thread_pool::server;
+mod thread_pool;
 
-fn main() -> Result<(), std::io::Error> {
-    server::run()
+fn main() -> Result<(), Box<dyn Error>> {
+    println!("tcp-server.rs");
+
+    #[cfg(feature = "thread-pool")]
+    let _ = thread_pool::server::run()?;
+
+    #[cfg(feature = "single-thread")]
+    let _ = single_thread::server::run()?;
+
+    Ok(())
 }
