@@ -1,10 +1,12 @@
 [package]
-name = "tcp"
+name = "socket-api"
 version = { workspace = true }
 edition = { workspace = true }
+default-run = "socket-api"
 
 [dependencies]
 
 [features]
 single-thread = []
+thread-pool = []
 default = ["single-thread"]

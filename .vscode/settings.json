@@ -29,12 +29,20 @@
         "editor.suggest.insertMode": "replace"
     },
     "rust-analyzer.linkedProjects": [
-        "servers/tcp/Cargo.toml",
+        "servers/Cargo.toml",
+        "./servers/socket-servers/Cargo.toml",
+        "./servers/socket-servers/Cargo.toml"
     ],
     "rust-analyzer.server.extraEnv": {
         "CARGO_TARGET_DIR": "target",
         "DATABASE_URL": "postgres://foo:foo_12345@localhost:5432/foo_db",
         "BUILD_VERSION": "0.0.0",
     },
+    "rust-analyzer.check.features": "all",
+    "rust-analyzer.cargo.features": [
+        "single-thread",
+        "thread-pool",
+    ],
+    "rust-analyzer.check.noDefaultFeatures": null,
     "git.ignoreLimitWarning": true
 }

@@ -19,8 +19,10 @@ pub fn run() -> Result<(), std::io::Error> {
 
         let mut buf = [0u8; 1024];
 
-        let _r = stream.read(&mut buf);
-        let _r = stream.write(&mut buf);
+        let r = stream.read(&mut buf)?;
+        println!("read {r} bytes");
+        let r = stream.write(&mut buf)?;
+        println!("send {r} bytes");
     }
 
     Ok(())
