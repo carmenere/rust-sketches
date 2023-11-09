@@ -29,11 +29,11 @@
         "editor.suggest.insertMode": "replace"
     },
     "rust-analyzer.linkedProjects": [
-        "Cargo.toml",
+        "example-api-nodb/Cargo.toml",
     ],
     "rust-analyzer.server.extraEnv": {
         "CARGO_TARGET_DIR": "target",
-        "DATABASE_URL": "postgres://foo:foo_12345@localhost:5432/foo_db",
+        "DATABASE_URL": "postgres://tokio:12345@localhost:5432/tokio_db",
         "BUILD_VERSION": "0.0.0",
     },
     "rust-analyzer.cargo.features": "all",

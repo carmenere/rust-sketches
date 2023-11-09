@@ -1,8 +1,21 @@
-[package]
-name = "actix"
-version = { workspace = true }
-edition = { workspace = true }
+[workspace]
+resolver = "2"
 
-[dependencies]
-actix-web = { workspace = true }
+members = [
+    "example-api-nodb",
+    "example-api-sqlx",
+]
 
+[workspace.package]
+version = "0.0.1"
+edition = "2021"
+
+[workspace.dependencies]
+actix-web = "4.4.0"
+
+[profile.release]
+strip = "symbols"
+
+[profile.dev]
+opt-level = 3
+debug = 1
