@@ -1,7 +1,7 @@
 [package]
 name = "socket-api"
-version = { workspace = true }
-edition = { workspace = true }
+version = "0.0.0"
+edition = "2021"
 default-run = "socket-api"
 
 [dependencies]
@@ -9,3 +9,10 @@ default-run = "socket-api"
 [features]
 single-thread = []
 thread-pool = []
+
+[profile.release]
+strip = "symbols"
+
+[profile.dev]
+opt-level = 3
+debug = 1

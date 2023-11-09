@@ -1,0 +1,8 @@
+[package]
+name = "actix"
+version = { workspace = true }
+edition = { workspace = true }
+
+[dependencies]
+actix-web = { workspace = true }
+
