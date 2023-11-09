@@ -1,0 +1,24 @@
+[workspace]
+resolver = "2"
+
+members = [
+    "example-api-nodb",
+    "example-api-sqlx",
+]
+
+[workspace.package]
+version = "0.0.1"
+edition = "2021"
+
+[workspace.dependencies]
+actix-web = "4.2.1"
+serde = "1.0.192"
+env_logger = "0.9.0"
+log = "0.4.20"
+
+[profile.release]
+strip = "symbols"
+
+[profile.dev]
+opt-level = 3
+debug = 1
