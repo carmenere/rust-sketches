@@ -20,14 +20,6 @@ enum Task {
 type Job = Box<dyn FnOnce() -> Result<(), Box<dyn Error>> + Send + 'static>;
 
 impl ThreadPool {
-    pub fn drop(self) {
-        self.threads.iter().for_each(|_| self.sender.send(Task::Terminate).unwrap());
-
-        for t in self.threads {
-            t.join().unwrap()
-        }
-    }
-
     pub fn new(theads: u8) -> Result<Self, MyError> {
         if theads == 0 {
             MyError::new("Number of threads must be greter then 0.");
@@ -74,12 +66,11 @@ impl thread_pool::ThreadPool for ThreadPool {
     }
 }
 
-// impl Drop for ThreadPool {
-//     fn drop(&mut self) {
-//         self.threads.iter().for_each(|_| self.sender.send(Task::Terminate).unwrap());
-
-//         for t in &self.threads {
-//             t.join().unwrap()
-//         }
-//     }
-// }
+impl Drop for ThreadPool {
+    fn drop(&mut self) {
+        self.threads.iter().for_each(|_| self.sender.send(Task::Terminate).unwrap());
+        
+        // std::mem::take(&mut self.threads).into_iter().for_each(|t| {t.join().unwrap()});
+        self.threads.drain(..).for_each(|t| {t.join().unwrap()});
+    }
+}

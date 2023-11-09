@@ -21,8 +21,6 @@ pub fn run() -> Result<(), Box<dyn Error>> {
         })?;
     }
 
-    pool.drop();
-
     Ok(())
 }
 
