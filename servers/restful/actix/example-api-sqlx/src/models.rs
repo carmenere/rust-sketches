@@ -1,7 +1,7 @@
 use actix_web::web;
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct NewPerson {
     pub name: String,
     pub surname: String,

@@ -1,9 +1,9 @@
 SHELL := bash
 SELF := $(realpath $(lastword $(MAKEFILE_LIST)))
 SELFDIR := $(realpath $(dir $(SELF)))
-WORKSPACE_DIR := $(realpath $(SELFDIR)/..)
+WORKSPACE := $(realpath $(SELFDIR)/..)
 
-CARGO_TOML ?= $(WORKSPACE_DIR)/Cargo.toml
+CARGO_TOML ?= $(WORKSPACE)/Cargo.toml
 BINS ?= example-api-sqlx
 CLIPPY_FORMAT ?= json
 CLIPPY_REPORT ?= clippy-report.json
@@ -11,7 +11,7 @@ FEATURES ?=
 LINTS ?= 
 PROFILE ?= dev
 TARGET_ARCH ?= aarch64-apple-darwin
-TARGET_DIR ?= $(WORKSPACE_DIR)/target
+TARGET_DIR ?= $(WORKSPACE)/target
 INSTALL_DIR ?= /usr/local/bin
 
 HOST ?= localhost
@@ -55,15 +55,33 @@ define LF
 
 endef
 
-# ENVS
 # RUSTFLAGS = -C target-feature=-crt-static
 DATABASE_URL = postgres://$(USER_NAME):$(USER_PASSWORD)@$(HOST):$(PORT)/$(USER_DB)
-BUILD_VERSION = $(git log -1 --pretty=format:"%h")
+BUILD_VERSION = $(shell git log -1 --pretty=format:"%h")
 
-ENVS ?= \
+BUILD_ENVS ?= \
     RUSTFLAGS='$(RUSTFLAGS)' \
     BUILD_VERSION='$(BUILD_VERSION)' \
     DATABASE_URL='$(DATABASE_URL)'
+
+
+HOST ?= localhost
+PORT ?= 5432
+USER_DB ?= example_api_sqlx_db
+USER_NAME ?= example_api_sqlx_user
+USER_PASSWORD ?= 12345
+
+SEVERITY = debug
+RUST_LOG = actix=$(SEVERITY),actix_web=$(SEVERITY),example_api_sqlx=$(SEVERITY),sqlx=$(SEVERITY)
+
+# ENVS
+ENVS ?= \
+    PG_HOST='$(HOST)' \
+    PG_PORT='$(PORT)' \
+    PG_DB='$(USER_DB)' \
+    PG_USER='$(USER_NAME)' \
+    PG_PASSWORD='$(USER_PASSWORD)' \
+    RUST_LOG='$(RUST_LOG)'
 
 OPT_BINS = $(foreach BIN,$(BINS), --bin $(BIN))
 
@@ -89,18 +107,17 @@ CARGO_OPTS ?= $(OPT_PROFILE) $(OPT_BINS) $(OPT_FEATURES) --manifest-path $(CARGO
 CARGO_TEST_OPTS ?= $(OPT_PROFILE) $(OPT_FEATURES) --manifest-path $(CARGO_TOML) \
     --target-dir $(TARGET_DIR) \
     --target $(TARGET_ARCH) \
-	--workspace \
-	--exclude scd
+    --workspace --exclude example-api-nodb
 
 ifdef BINS
-CMD_BUILD ?= $(ENVS) cargo build $(CARGO_OPTS)
-CMD_CLIPPY ?= $(ENVS) cargo clippy $(CARGO_OPTS) --message-format $(CLIPPY_FORMAT) -- $(LINTS) 1>$(CLIPPY_REPORT)
-CMD_CLIPPY_FIX ?= $(ENVS) cargo clippy --fix $(CARGO_OPTS)
-CMD_TEST ?= $(ENVS) cargo test $(CARGO_TEST_OPTS)
+CMD_BUILD ?= $(BUILD_ENVS) cargo build $(CARGO_OPTS)
+CMD_CLIPPY ?= $(BUILD_ENVS) cargo clippy $(CARGO_OPTS) --message-format $(CLIPPY_FORMAT) -- $(LINTS) 1>$(CLIPPY_REPORT)
+CMD_CLIPPY_FIX ?= $(BUILD_ENVS) cargo clippy --fix $(CARGO_OPTS)
+CMD_FMT ?=  $(BUILD_ENVS) cargo +nightly fmt
+CMD_FMT_CHECK ?= $(BUILD_ENVS) $(CMD_FMT) -- --check
+CMD_DOC ?= $(BUILD_ENVS) cargo doc --no-deps --document-private-items
+CMD_TEST ?= $(BUILD_ENVS) $(ENVS) cargo test $(CARGO_TEST_OPTS)
 CMD_CLEAN ?= $(ENVS) cargo clean --manifest-path $(CARGO_TOML)
-CMD_FMT ?=  $(ENVS) cargo +nightly fmt
-CMD_FMT_CHECK ?= $(CMD_FMT) -- --check
-CMD_DOC ?= $(ENVS) cargo doc --no-deps --document-private-items
 endif
 
 .PHONY: all build clippy clippy-fix lint test fmt fmt-check doc install uninstall clean distclean
@@ -108,30 +125,30 @@ endif
 all: fmt clippy build test
 
 build:
-	cd $(WORKSPACE_DIR) && $(CMD_BUILD)
+	cd $(WORKSPACE) && $(CMD_BUILD)
 
 clippy:
-	cd $(WORKSPACE_DIR) && $(CMD_CLIPPY)
+	cd $(WORKSPACE) && $(CMD_CLIPPY)
 
 clippy-fix:
-	cd $(WORKSPACE_DIR) && $(CMD_CLIPPY_FIX)
+	cd $(WORKSPACE) && $(CMD_CLIPPY_FIX)
 
 lint: clippy
 
 test:
-	cd $(WORKSPACE_DIR) && $(CMD_TEST)
+	cd $(WORKSPACE) && $(CMD_TEST)
 
 fmt:
-	cd $(WORKSPACE_DIR) && $(CMD_FMT)
+	cd $(WORKSPACE) && $(CMD_FMT)
 
 fmt-check:
-	cd $(WORKSPACE_DIR) && $(CMD_FMT_CHECK)
+	cd $(WORKSPACE) && $(CMD_FMT_CHECK)
 
 doc:
-	cd $(WORKSPACE_DIR) && $(CMD_DOC)
+	cd $(WORKSPACE) && $(CMD_DOC)
 
 clean:
-	cd $(WORKSPACE_DIR) && $(CMD_CLEAN)
+	cd $(WORKSPACE) && $(CMD_CLEAN)
 
 distclean: clean
 
