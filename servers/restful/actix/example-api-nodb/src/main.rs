@@ -1,7 +1,5 @@
-use std::io;
 use actix_web::{App, web, HttpServer};
 use example_api_nodb as lib;
-// use env_logger;
 
 #[actix_web::main]
 async fn main() -> Result<(), std::io::Error> {
