@@ -30,11 +30,12 @@
     },
     "rust-analyzer.linkedProjects": [
         "example-api-nodb/Cargo.toml",
+        "example-api-sqlx/Cargo.toml",
     ],
     "rust-analyzer.cargo.extraEnv": {
         "CARGO_TARGET_DIR": "/tmp/target",
         "BUILD_VERSION": "0.0.0",
-        "DATABASE_URL": "postgres://actix:12345@localhost:5432/actix_db",
+        "DATABASE_URL": "postgres://example_api_sqlx_user:12345@localhost:5432/example_api_sqlx_db",
     },
     "rust-analyzer.cargo.features": "all",
     "git.ignoreLimitWarning": true,
