@@ -15,7 +15,8 @@ actix-web = "4.2.1"
 serde = "1.0.192"
 env_logger = "0.9.0"
 log = "0.4.20"
-sqlx = "0.7.2"
+sqlx = {version = "0.7.2", default_features = false}
+tokio = "1.34.0"
 
 [profile.release]
 strip = "symbols"

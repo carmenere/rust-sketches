@@ -5,9 +5,9 @@ edition = { workspace = true }
 
 [dependencies]
 actix-web = { workspace = true }
-serde = { workspace = true, features = ["derive"]}
+tokio = { workspace = true, features = ["macros"] }
 env_logger = { workspace = true }
 log = { workspace = true }
+serde = { workspace = true, features = ["derive"]}
 sqlx = { workspace = true, default_features = false, features = [
     "postgres", "runtime-tokio-native-tls", "macros", "chrono"]}
-

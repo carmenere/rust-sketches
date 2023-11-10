@@ -1,10 +1,10 @@
 SHELL := bash
 SELF := $(realpath $(lastword $(MAKEFILE_LIST)))
 SELFDIR := $(realpath $(dir $(SELF)))
-WORKSPACE_DIR := $(realpath $(SELFDIR)/..)
+WORKSPACE := $(realpath $(SELFDIR)/..)
 
 APP ?= example-api-sqlx
-BIN_PATH ?= $(WORKSPACE_DIR)/target/aarch64-apple-darwin/debug/example-api-sqlx
+BIN_PATH ?= $(WORKSPACE)/target/aarch64-apple-darwin/debug/example-api-sqlx
 LOG_FILE ?= $(SELFDIR)/.artefacts/.logs/$(APP)
 PID_FILE ?= $(SELFDIR)/.artefacts/.pid/$(APP)
 PKILL_PATTERN ?= $(BIN_PATH)
@@ -17,7 +17,8 @@ USER_NAME ?= example_api_sqlx_user
 USER_PASSWORD ?= 12345
 
 MIGRATIONS = migrations
-RUST_LOG = actix=debug,actix_web=debug,example_api_sqlx=debug
+SEVERITY = debug
+RUST_LOG = actix=$(SEVERITY),actix_web=$(SEVERITY),example_api_sqlx=$(SEVERITY),sqlx=$(SEVERITY)
 
 # ENVS
 ENVS ?= \
