@@ -1,7 +1,7 @@
-pub mod routes;
-pub mod state;
-pub mod settings;
-
+pub mod errors;
 pub mod handlers;
-mod version;
 pub mod models;
+pub mod routes;
+pub mod settings;
+pub mod state;
+pub mod version;

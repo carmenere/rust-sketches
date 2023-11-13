@@ -107,7 +107,7 @@ CARGO_OPTS ?= $(OPT_PROFILE) $(OPT_BINS) $(OPT_FEATURES) --manifest-path $(CARGO
 CARGO_TEST_OPTS ?= $(OPT_PROFILE) $(OPT_FEATURES) --manifest-path $(CARGO_TOML) \
     --target-dir $(TARGET_DIR) \
     --target $(TARGET_ARCH) \
-    --workspace --exclude example-api-nodb
+    --package example-api-sqlx
 
 ifdef BINS
 CMD_BUILD ?= $(BUILD_ENVS) cargo build $(CARGO_OPTS)
@@ -115,7 +115,7 @@ CMD_CLIPPY ?= $(BUILD_ENVS) cargo clippy $(CARGO_OPTS) --message-format $(CLIPPY
 CMD_CLIPPY_FIX ?= $(BUILD_ENVS) cargo clippy --fix $(CARGO_OPTS)
 CMD_FMT ?=  $(BUILD_ENVS) cargo +nightly fmt
 CMD_FMT_CHECK ?= $(BUILD_ENVS) $(CMD_FMT) -- --check
-CMD_DOC ?= $(BUILD_ENVS) cargo doc --no-deps --document-private-items
+CMD_DOC ?= $(BUILD_ENVS) cargo doc --no-deps --document-private-items --package example-api-sqlx --open
 CMD_TEST ?= $(BUILD_ENVS) $(ENVS) cargo test $(CARGO_TEST_OPTS)
 CMD_CLEAN ?= $(ENVS) cargo clean --manifest-path $(CARGO_TOML)
 endif
