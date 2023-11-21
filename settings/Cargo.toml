@@ -1,0 +1,10 @@
+[package]
+name = "example"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+# config = "0.13.3"
+config = "0.11.0"
+serde = { versin = "1.0.192", features = ["derive"]}
+anyhow = "1.0.66"
