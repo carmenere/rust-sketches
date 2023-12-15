@@ -1,0 +1,13 @@
+[package]
+name = "hello-axum"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+tokio = { version = "1", features = ["full"] }
+axum = "0.7.2"
+serde = { version = "1.0.193", features = ["derive"] }
+
+[dev-dependencies]
+httpc-test = "0.1.8"
+reqwest = "0.11.22"
